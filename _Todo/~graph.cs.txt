@@ -1,0 +1,304 @@
+﻿using SLIS = SixLabors.ImageSharp;
+
+namespace Ans.Net7.Images
+{
+
+	public static partial class _e
+	{
+
+		/*
+		 * 
+		 * SLIS.Image GetImageAround(this SLIS.Image image, int width, int height, bool increase)
+		 * SLIS.Image GetImageInside(this SLIS.Image image, int width, int height, bool increase)
+		 * SLIS.Image GetImageAverage(this SLIS.Image image, int size, bool increase)
+		 * 
+		 */
+
+
+		/// <summary>
+		/// Масштабировать снаружи
+		/// </summary>
+		public static SLIS.Image GetImageAround(
+			this SLIS.Image image,
+			int width,
+			int height,
+			bool increase)
+		{
+			if (!increase && (image.Width <= width || image.Height <= height))
+				return image;
+			var r1 = new Resizer(image.Width, image.Height);
+			r1.ScaleAround(width, height);
+			return image._mutate(r1);
+		}
+
+
+		/// <summary>
+		/// Масштабировать внутри
+		/// </summary>
+		public static SLIS.Image GetImageInside(
+			this SLIS.Image image,
+			int width,
+			int height,
+			bool increase)
+		{
+			if (!increase && (image.Width <= width || image.Height <= height))
+				return image;
+			var r1 = new Resizer(image.Width, image.Height);
+			r1.ScaleInside(width, height);
+			return image._mutate(r1);
+		}
+
+
+		/// <summary>
+		/// Масштабировать усреднением
+		/// </summary>
+		public static SLIS.Image GetImageAverage(
+			this SLIS.Image image,
+			int size,
+			bool increase)
+		{
+			if (!increase && (image.Width <= size || image.Height <= size))
+				return image;
+			var r1 = new Resizer(image.Width, image.Height);
+			r1.ScaleAverage(size);
+			return image._mutate(r1);
+		}
+
+
+
+		/// <summary>
+		/// Масштабировать до ширины
+		/// </summary>
+		public static SLIS.Image GetImageToWidth(
+			this SLIS.Image image,
+			int width,
+			bool increase)
+		{
+			if (!increase && (image.Width <= width))
+				return image;
+			var r1 = new Resizer(image.Width, image.Height);
+			r1.ScaleToWidth(width);
+			return image._mutate(r1);
+		}
+
+
+		/// <summary>
+		/// Масштабировать до высоты
+		/// </summary>
+		public static SLIS.Image GetImageToHeight(
+			this SLIS.Image image,
+			int height,
+			bool increase)
+		{
+			if (!increase && (image.Height <= height))
+				return image;
+			var r1 = new Resizer(image.Width, image.Height);
+			r1.ScaleToHeight(height);
+			return image._mutate(r1);
+		}
+
+
+		/// <summary>
+		/// Масштабировать
+		/// </summary>
+		public static SLIS.Image GetImageScale(
+			this SLIS.Image image,
+			float ratio)
+		{
+			var r1 = new Resizer(image.Width, image.Height);
+			r1.Scale(ratio);
+			return image._mutate(r1);
+		}
+
+
+		/* privates */
+
+
+		private static SLIS.Image _mutate(
+			this SLIS.Image image,
+			Resizer resizer)
+		{
+			image.Mutate(x => x.Resize(resizer.NewWidth, resizer.NewHeight));
+			var res1 = new SLIS.Image<Rgba32>((int)resizer.NewWidth, (int)resizer.NewHeight);
+			res1.Mutate(x => x.DrawImage(image, 1f));
+			return res1;
+		}
+
+
+
+
+
+
+
+		/*
+
+		public static SLIS.Image GetImageInside(
+		    this SLIS.Image image,
+		    int width,
+		    int height,
+		    bool addTransparentBackground,
+		    bool increase)
+		{
+		    if (!increase && (image.Width <= width && image.Height <= height))
+		        return image;
+		    var r = new Resizer(image.Width, image.Height);
+		    r.ScaleInside(width, height);
+		    Image bmp = new Bitmap((int)r.NewWidth, (int)r.NewHeight, PixelFormat.Format24bppRgb);
+		    bmp.InsertImage(image, 0, 0, addTransparentBackground);
+		    return bmp;
+		}
+
+		public static SLIS.Image GetImageAverage(
+		    this SLIS.Image image,
+		    int side,
+		    bool addTransparentBackground,
+		    bool increase)
+		{
+		    if (!increase && (image.Width <= side && image.Height <= side))
+		        return image;
+		    var r = new Resizer(image.Width, image.Height);
+		    r.ScaleAverage(side);
+		    if (!increase && (r.NewWidth >= image.Width && r.NewHeight >= image.Height))
+		        return image;
+		    Image bmp = new Bitmap((int)r.NewWidth, (int)r.NewHeight, PixelFormat.Format24bppRgb);
+		    bmp.InsertImage(image, 0, 0, addTransparentBackground);
+		    return bmp;
+		}
+
+		public static SLIS.Image GetImageScaleToWidth(
+		    this SLIS.Image image,
+		    int width,
+		    bool addTransparentBackground,
+		    bool increase)
+		{
+		    if (!increase && (image.Width <= width))
+		        return image;
+		    var r = new Resizer(image.Width, image.Height);
+		    r.ScaleToWidth(width);
+		    Image bmp = new Bitmap((int)r.NewWidth, (int)r.NewHeight, PixelFormat.Format24bppRgb);
+		    bmp.InsertImage(image, 0, 0, addTransparentBackground);
+		    return bmp;
+		}
+
+		public static SLIS.Image GetImageScaleToHeight(
+		    this SLIS.Image image,
+		    int height,
+		    bool addTransparentBackground,
+		    bool increase)
+		{
+		    if (!increase && (image.Height <= height))
+		        return image;
+		    var r = new Resizer(image.Width, image.Height);
+		    r.ScaleToHeight(height);
+		    Image bmp = new Bitmap((int)r.NewWidth, (int)r.NewHeight, PixelFormat.Format24bppRgb);
+		    bmp.InsertImage(image, 0, 0, addTransparentBackground);
+		    return bmp;
+		}
+
+		public static SLIS.Image GetImageCrop(
+		    this SLIS.Image source,
+		    int leftOfs,
+		    int topOfs,
+		    int width,
+		    int height)
+		{
+		    var bmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+		    using (var g = bmp.GetGraphics())
+		        g.DrawImage(source, -leftOfs, -topOfs);
+		    return bmp;
+		}
+
+		public static void Rotate(
+		    this SLIS.Image image,
+		    int angle)
+		{
+		    throw new NotImplementedException();
+		}
+
+		public static void Increase(
+		    this SLIS.Image image,
+		    int percent)
+		{
+		    throw new NotImplementedException();
+		}
+
+		public static void SetBrightness(
+		    this Bitmap bmp,
+		    int brightness)
+		{
+		    double a, r, g, b;
+		    Color color;
+		    for (int y = 0; y < bmp.Height; y++)
+		        for (int x = 0; x < bmp.Width; x++)
+		        {
+		            color = bmp.GetPixel(x, y);
+		            a = color.A;
+		            r = color.R + brightness;
+		            g = color.G + brightness;
+		            b = color.B + brightness;
+		            if (r < 0) r = 0; else if (r > 255) r = 255;
+		            if (b < 0) b = 0; else if (b > 255) b = 255;
+		            if (g < 0) g = 0; else if (g > 255) g = 255;
+		            bmp.SetPixel(x, y, Color.FromArgb((int)a, (int)r, (int)g, (int)b));
+		        }
+		}
+
+		public static void SetContrast(
+		    this Bitmap bmp,
+		    double contrast)
+		{
+		    double a, r, g, b, c;
+		    Color color;
+		    c = (100.0 + contrast) / 100.0;
+		    c *= c;
+		    for (int y = 0; y < bmp.Height; y++)
+		        for (int x = 0; x < bmp.Width; x++)
+		        {
+		            color = bmp.GetPixel(x, y);
+		            a = color.A;
+		            r = ((((color.R / 255.0) - 0.5) * c) + 0.5) * 255;
+		            g = ((((color.G / 255.0) - 0.5) * c) + 0.5) * 255;
+		            b = ((((color.B / 255.0) - 0.5) * c) + 0.5) * 255;
+		            if (r > 255) r = 255; else if (r < 0) r = 0;
+		            if (g > 255) g = 255; else if (g < 0) g = 0;
+		            if (b > 255) b = 255; else if (b < 0) b = 0;
+		            bmp.SetPixel(x, y, Color.FromArgb((int)a, (int)r, (int)g, (int)b));
+		        }
+		}
+
+		public static void SaveJpeg(
+		    this Image image,
+		    string filename,
+		    int quality)
+		{
+		    image.Save(filename,
+		        SuppGraph.GetImageCodecInfo(ImageFormat.Jpeg),
+		        SuppGraph.GetQualityEncoderParameters(quality));
+		}
+
+		public static void SaveJpeg(
+		    this Image image,
+		    string filename,
+		    EncoderQualitiesEnum quality)
+		{
+		    image.SaveJpeg(filename, (int)quality);
+		}
+
+		public static Graphics GetGraphics(
+			this Image image,
+			Brush brush = null)
+		{
+			var g = Graphics.FromImage(image);
+			g.CompositingQuality = CompositingQuality.HighQuality;
+			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			g.SmoothingMode = SmoothingMode.HighQuality;
+			if (brush != null)
+				g.FillRectangle(brush, -1, -1, image.Width + 1, image.Height + 1);
+			return g;
+		}
+        
+		*/
+
+	}
+
+}

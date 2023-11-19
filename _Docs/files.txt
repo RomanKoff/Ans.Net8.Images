@@ -1,0 +1,119 @@
+
+	
+	Запрос файла
+		int catalogId,
+		string path,
+		string s
+
+	/file path/
+	? exists
+		false: 404
+	? JPEG
+		false: return
+	/thumbnail path/
+		? exists
+			true: return
+			false: gen + return
+	
+
+
+Thumbnail
+Миниатюра для оценки изображения (для АРМ и систем управления контентом)
+/{filename}.jpg?s=t
+	/__thumbs/{filename}._t.jpg
+	Around 384x256 + Crop 384x256 (center)
+	
+Normal
+Нормализованная копия (для совместимости со старой ленты новостей)
+/{filename}.jpg?s=n
+	/__thumbs/{filename}._n.jpg
+	Inside 256x256
+
+Small
+Уменьшенная копия (виджеты ленты новостей)
+/{filename}.jpg?s=sm
+	/__thumbs/{filename}.sm.jpg
+	Average 576
+
+Medium
+Базовая копия (контент публикации)
+/{filename}.jpg?s=md
+	/__thumbs/{filename}.md.jpg
+	Average 768
+
+Large
+Увеличенная копия (контент публикации для высоких разрешений экрана и слайдеров)
+/{filename}.jpg?s=lg
+	/__thumbs/{filename}.lg.jpg
+	Average 992
+
+Extralarge
+Копия в высоком разрешении (для передачи в полиграфию)
+/{filename}.jpg?s=xl
+	/__thumbs/{filename}.xl.jpg
+	Average 1200
+
+Ratio2on1
+Миниатюра в соотношении 2 к 1 (для мобильного приложения)
+/{filename}.jpg?s=r21
+	/__thumbs/{filename}.r21.jpg
+	Around 800x400 + Crop 800x400 (center)
+
+Default
+По умолчанию. Квадрат-предпросмотр. Для отображения в квадратных модулях (галерея)
+/{filename}.jpg[?s=*]
+	/__thumbs/{filename}._p.jpg
+	Around 256x256 + Crop 256x256 (center)
+	
+Original
+Оригинал (создается в случае коррекции исходного графического файла) (архивная копия)
+/{filename}.jpg?s=0
+	/__thumbs/{filename}.0.jpg
+	
+Full
+Полноразмерная копия (для передачи в полиграфию)
+/{filename}.jpg?s=full
+	/{filename}.jpg
+
+
+
+	
+
+
+Medium
+
+/{filename}.jpg?s=md
+	/__thumbs/{filename}.md.jpg
+	Average 768
+
+Large
+
+/{filename}.jpg?s=lg
+	/__thumbs/{filename}.lg.jpg
+	Average 992
+
+Extralarge
+
+/{filename}.jpg?s=xl
+	/__thumbs/{filename}.xl.jpg
+	Average 1200
+
+Ratio2on1
+
+/{filename}.jpg?s=r21
+	/__thumbs/{filename}.r21.jpg
+	Around 800x400 + Crop 800x400 (center)
+
+Full
+
+/{filename}.jpg?s=full
+	/{filename}.jpg
+	как в оригинале (или после коррекции)
+
+Original
+
+/{filename}.jpg?s=0
+	/__thumbs/{filename}.0.jpg
+	оригинал
+
+

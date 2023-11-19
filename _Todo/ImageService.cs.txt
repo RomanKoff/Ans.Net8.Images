@@ -1,0 +1,60 @@
+﻿using System.Text.RegularExpressions;
+using SLIS = SixLabors.ImageSharp;
+
+namespace Ans.Net7.Images.Services
+{
+
+	public interface IImageService
+	{
+		void Make1();
+	}
+
+
+
+	public class AnsImageSercive
+		: IImageService
+	{
+
+		public AnsImageSercive()
+		{
+		}
+
+		public void Make1()
+		{
+			var path1 = "C:\\inetpub\\wwwroot\\_MEDIA\\_catalogs\\000\\00\\00\\001.jpg";
+			MakeThumbs(path1);
+		}
+
+		public void MakeThumbs(
+			string path)
+		{
+			var path1 = "C:\\inetpub\\wwwroot\\_MEDIA\\_catalogs\\000\\00\\00\\001.jpg";
+			using var image1 = SLIS.Image.Load(path1);
+			using var destRound = image1.Clone(x => x.)
+			destRound.Save("output/fb-rounder.png");
+
+			// The original `img` object has not been altered at all.
+
+
+			image1
+				.GetImageScale(.1f)
+				.SaveAsJpeg($"{path1}.test.jpg");
+		}
+
+
+
+		private static IImageProcessingContext ConvertToAvatar(
+			this IImageProcessingContext context,
+			Size size)
+		{
+			return context.Resize(
+				new ResizeOptions
+				{
+					Size = size,
+					Mode = ResizeMode.Crop
+				});
+		}
+
+	}
+
+}

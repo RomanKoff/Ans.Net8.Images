@@ -1,0 +1,260 @@
+﻿namespace Ans.Net7.Images
+{
+
+	public static class SuppImage
+	{
+
+		/*
+
+		public enum EncoderQualitiesEnum
+			: int
+		{
+			Low = 20,
+			Medium = 40,
+			High = 60,
+			VeryHigh = 80,
+			Maximum = 100
+		}
+
+		/// <summary>
+		/// Возвращает Bitmap с маской прозрачного фона
+		/// </summary>
+		public static Bitmap GetTransmaskBitmap()
+		{
+			var bmp = new Bitmap(8, 8, PixelFormat.Format24bppRgb);
+			var data = bmp.LockBits(
+				new Rectangle(0, 0, 8, 8), ImageLockMode.WriteOnly, bmp.PixelFormat);
+			Marshal.Copy(_transparent_mask, 0, data.Scan0, data.Stride * bmp.Height);
+			bmp.UnlockBits(data);
+			return bmp;
+		}
+
+		/// <summary>
+		/// Возвращает Brush прозрачного фона
+		/// </summary>
+		public static Brush GetTransparentBrush()
+		{
+			return new TextureBrush(GetTransmaskBitmap());
+		}
+
+		/// <summary>
+		/// Возвращает информацию о кодеке
+		/// </summary>
+		public static ImageCodecInfo GetImageCodecInfo(
+			ImageFormat format)
+		{
+			return ImageCodecInfo.GetImageDecoders()
+				.SingleOrDefault(c => c.FormatID == format.Guid);
+		}
+
+		/// <summary>
+		/// Возвращает пораметры кодирования
+		/// </summary>
+		public static EncoderParameters GetQualityEncoderParameters(
+			int quality)
+		{
+			var res = new EncoderParameters(1);
+			res.Param[0] = new EncoderParameter(Encoder.Quality, quality);
+			return res;
+		}
+
+		/// <summary>
+		/// Возвращает пораметры кодирования
+		/// </summary>
+		public static EncoderParameters GetQualityEncoderParameters(
+			EncoderQualitiesEnum quality)
+		{
+			return GetQualityEncoderParameters((int)quality);
+		}
+
+		/// <summary>
+		/// Возвращает случайный цвет
+		/// </summary>
+		public static Color GetRandomColor(
+			int minColorRange,
+			int maxColorRange,
+			bool isColoured)
+		{
+			if (isColoured)
+				return Color.FromArgb(
+					SuppRandom.Next(minColorRange, maxColorRange),
+					SuppRandom.Next(minColorRange, maxColorRange),
+					SuppRandom.Next(minColorRange, maxColorRange));
+			int c = SuppRandom.Next(minColorRange, maxColorRange);
+			return Color.FromArgb(c, c, c);
+		}
+
+		/// <summary>
+		/// Возвращает случайный цвет
+		/// </summary>
+		public static Color GetRandomColor(
+			Point colorRange,
+			bool isColoured)
+		{
+			return GetRandomColor(colorRange.X, colorRange.Y, isColoured);
+		}
+
+		/// <summary>
+		/// Возвращает размер изображения
+		/// </summary>
+		public static Size GetImageDimensions(
+			BinaryReader reader)
+		{
+			int max = _decoders.Keys
+				.OrderByDescending(x => x.Length).First().Length;
+			byte[] buffer = new byte[max];
+			for (int i = 0; i < max; i += 1)
+			{
+				buffer[i] = reader.ReadByte();
+				foreach (var k in _decoders)
+					if (_isStartsWith(buffer, k.Key))
+						return k.Value(reader);
+			}
+			throw new ArgumentException(
+				_Resources.Common.Error_Graph_ImageFormatFail, "reader");
+		}
+
+		/// <summary>
+		/// Возвращает размер изображения
+		/// </summary>
+		public static Size GetImageDimensions(
+			string filename)
+		{
+			try
+			{
+				using (var reader = new BinaryReader(File.OpenRead(filename)))
+				{
+					try
+					{
+						return GetImageDimensions(reader);
+					}
+					catch (ArgumentException e)
+					{
+						var s = string.Format("{0} (file: {1})",
+							_Resources.Common.Error_Graph_ImageFormatFail, filename);
+						throw new ArgumentException(s, "filename", e);
+					}
+				}
+			}
+			catch (ArgumentException)
+			{
+				using (var bmp = new Bitmap(filename))
+					return bmp.Size;
+			}
+		}
+
+		// privates
+
+		private static readonly byte[] _transparent_mask = new byte[]
+		{
+			0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99,
+			0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc,
+			0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99,
+			0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc,
+			0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99,
+			0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc,
+			0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99,
+			0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc,
+			0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc,
+			0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99,
+			0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc,
+			0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99,
+			0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc,
+			0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99,
+			0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc, 0xcc,0xcc,0xcc,
+			0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99, 0x99,0x99,0x99
+		};
+
+		private static readonly Dictionary<byte[], Func<BinaryReader, Size>> _decoders = new Dictionary<byte[], Func<BinaryReader, Size>>()
+		{
+			{ new byte[] { 0x42, 0x4D }, _decodeBitmap },
+			{ new byte[] { 0x47, 0x49, 0x46, 0x38, 0x37, 0x61 }, _decodeGif },
+			{ new byte[] { 0x47, 0x49, 0x46, 0x38, 0x39, 0x61 }, _decodeGif },
+			{ new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }, _decodePng },
+			{ new byte[] { 0xff, 0xd8 }, _decodeJfif },
+		};
+
+		private static bool _isStartsWith(
+			byte[] thisBytes,
+			byte[] thatBytes)
+		{
+			for (int i = 0; i < thatBytes.Length; i += 1)
+				if (thisBytes[i] != thatBytes[i])
+					return false;
+			return true;
+		}
+
+		private static short _readLittleEndianInt16(
+			BinaryReader reader)
+		{
+			byte[] buffer = new byte[sizeof(short)];
+			for (int i = 0; i < sizeof(short); i += 1)
+				buffer[sizeof(short) - i - 1] = reader.ReadByte();
+			return BitConverter.ToInt16(buffer, 0);
+		}
+
+		private static int _readLittleEndianInt32(
+			BinaryReader reader)
+		{
+			byte[] buffer = new byte[sizeof(int)];
+			for (int i = 0; i < sizeof(int); i += 1)
+				buffer[sizeof(int) - i - 1] = reader.ReadByte();
+			return BitConverter.ToInt32(buffer, 0);
+		}
+
+		private static Size _decodeBitmap(
+			BinaryReader reader)
+		{
+			reader.ReadBytes(16);
+			int w = reader.ReadInt32();
+			int h = reader.ReadInt32();
+			return new Size(w, h);
+		}
+
+		private static Size _decodeGif(
+			BinaryReader reader)
+		{
+			int w = reader.ReadInt16();
+			int h = reader.ReadInt16();
+			return new Size(w, h);
+		}
+
+		private static Size _decodePng(
+			BinaryReader reader)
+		{
+			reader.ReadBytes(8);
+			int w = _readLittleEndianInt32(reader);
+			int h = _readLittleEndianInt32(reader);
+			return new Size(w, h);
+		}
+
+		private static Size _decodeJfif(
+			BinaryReader reader)
+		{
+			while (reader.ReadByte() == 0xff)
+			{
+				byte b = reader.ReadByte();
+				short chunkLength = _readLittleEndianInt16(reader);
+				if (b == 0xc0)
+				{
+					reader.ReadByte();
+					int h = _readLittleEndianInt16(reader);
+					int w = _readLittleEndianInt16(reader);
+					return new Size(w, h);
+				}
+				if (chunkLength < 0)
+				{
+					ushort uchunkLength = (ushort)chunkLength;
+					reader.ReadBytes(uchunkLength - 2);
+				}
+				else
+					reader.ReadBytes(chunkLength - 2);
+			}
+			throw new ArgumentException(_Resources.Common.Error_Graph_ImageFormatFail);
+		}
+
+		*/
+
+	}
+
+}
