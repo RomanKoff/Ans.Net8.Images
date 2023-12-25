@@ -1,10 +1,11 @@
 ﻿using Ans.Net8.Common;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 
 namespace Ans.Net8.Images
 {
 
-    public static class SuppImage
+	public static class SuppImage
     {
 
         /*

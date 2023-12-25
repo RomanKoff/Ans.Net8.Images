@@ -1,9 +1,10 @@
 ﻿using Ans.Net8.Common;
+using SixLabors.ImageSharp;
 
 namespace Ans.Net8.Images
 {
 
-    public class Resizer
+	public class Resizer
     {
 
         /* ctor */

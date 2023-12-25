@@ -1,4 +1,6 @@
-﻿namespace Ans.Net8.Images
+﻿using SixLabors.ImageSharp;
+
+namespace Ans.Net8.Images
 {
 
 	public class ImageHelper
